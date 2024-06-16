@@ -1,6 +1,6 @@
-import time
 import requests
 import numpy as np
+from sklearn.metrics.pairwise import cosine_distances
 from numpy.linalg import norm
 
 from dictionary import dictionary
@@ -39,8 +39,8 @@ def load_words(path):
 
 def get_distance(embeddings, guess):
     """Returns the distances between the word embeddings and a guess."""
-    # return 1 - (np.dot(embeddings, guess) / (norm(embeddings, axis=1) * norm(guess)))
-    return norm(embeddings - guess, axis=1)
+    distances = cosine_distances(embeddings, guess.reshape(1, -1))
+    return distances.flatten()
 
 
 def make_guess(scores: np.ndarray) -> int:
@@ -92,7 +92,7 @@ def solve(game, words, embeddings, log=False):
 
         # Print the solution once it is found.
         if current_rank == 0:
-            print(f"Solution: {words[current_guess]}\n")
+            print(f"Solution: {words[current_guess]}\tGuesses: {n_guesses}")
             return words[current_guess], n_guesses
 
         if previous_guess != None:
