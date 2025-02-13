@@ -9,7 +9,7 @@ class SimplePenaltyAgent:
     def __init__(self, game: Game):
         self.game = game
         self.words, self.embeddings = load_words()
-        self.scores = np.zeros(len(self.words), dtype=np.float64)
+        self.penalties = np.zeros(len(self.words), dtype=np.float64)
 
     def play(self, log=False):
         
@@ -23,21 +23,21 @@ class SimplePenaltyAgent:
 
             # Skip invalid words
             if rank is None:
-                self.scores[guess] = np.inf
+                self.penalties[guess] = np.inf
                 continue
 
             # Skip guesses already made
             if rank in list(self.game.history.values())[:-1]:
-                self.scores[guess] = np.inf
+                self.penalties[guess] = np.inf
                 continue
 
             if rank == 0:
                 return self.words[guess]
             
-            self.update_scores(guess, rank)
+            self.update_penalties(guess, rank)
 
 
-    def update_scores(self, last_guess: int, last_rank: int):
+    def update_penalties(self, last_guess: int, last_rank: int):
 
         for word, rank in self.game.history.items():
 
@@ -55,12 +55,12 @@ class SimplePenaltyAgent:
             d2 = get_distances(self.embeddings, self.embeddings[self.words == w2])
 
             if r1 < r2:
-                self.scores += (d1 > d2).astype(int)
+                self.penalties += (d1 > d2).astype(int)
             if r1 > r2:
-                self.scores += (d1 < d2).astype(int)
+                self.penalties += (d1 < d2).astype(int)
 
-        self.scores[last_guess] = np.inf
+        self.penalties[last_guess] = np.inf
 
     def get_best_guess(self) -> int:
-        """Returns the index of the word with the best (lowest) score."""
-        return np.argmin(self.scores)
+        """Returns the index of the word with the best (lowest) penalty."""
+        return np.argmin(self.penalties)
