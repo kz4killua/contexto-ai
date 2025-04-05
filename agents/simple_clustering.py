@@ -50,7 +50,7 @@ class SimpleClusteringAgent:
 
             leaf = select(self.root)
             node = expand(leaf, self.embeddings, self.metric)
-            guess, rank = simulate(node, self.game)
+            guess, rank = simulate(node, self.game, self.words)
 
             if log:
                 print(f"Guess #{self.game.number_of_guesses}: {self.words[guess]}, Rank: {rank}")
@@ -107,10 +107,10 @@ def expand(node: Node, embeddings: np.ndarray, metric: str) -> Node:
     return node.children[0]
 
 
-def simulate(node: Node, game: Game):
+def simulate(node: Node, game: Game, words: np.ndarray):
     """Pick a guess from the cluster and get its rank."""
     guess = node.cluster[0]
-    word = game.words[guess]
+    word = words[guess]
     rank = game.make_guess(word)
     return guess, rank
 
