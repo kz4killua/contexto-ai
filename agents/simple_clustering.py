@@ -135,7 +135,7 @@ def uct(node):
 
 def calculate_reward(rank: int) -> int:
     """Calculate the reward based on the rank."""
-    return 1 / (rank + 1)
+    return -rank
 
 
 def prune(leaf: Node, guess: int):
