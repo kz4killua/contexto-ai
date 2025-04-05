@@ -1,19 +1,21 @@
 import numpy as np
 
 from game import Game
-from utils import load_words, get_distances
+from utils import get_distances
 
 
 class SimplePenaltyAgent:
 
-    def __init__(self, game: Game):
+    def __init__(self, game: Game, words: np.ndarray, embeddings: np.ndarray):
+        self.words = words
+        self.embeddings = embeddings
         self.game = game
-        self.words, self.embeddings = load_words()
         self.penalties = np.zeros(len(self.words), dtype=np.float64)
 
-    def play(self, log=False):
+    def play(self, moves: int, log: bool=False):
+        """Play the game for a given number of moves."""
         
-        while True:
+        for _ in range(moves):
 
             guess = self.get_best_guess()
             rank = self.game.make_guess(self.words[guess])
@@ -36,8 +38,8 @@ class SimplePenaltyAgent:
             
             self.update_penalties(guess, rank)
 
-
     def update_penalties(self, last_guess: int, last_rank: int):
+        """Add penalties to words that are inconsistent with the ranks so far."""
 
         for word, rank in self.game.history.items():
 
@@ -51,8 +53,8 @@ class SimplePenaltyAgent:
             w1, r1 = word, rank
             w2, r2 = self.words[last_guess], last_rank
 
-            d1 = get_distances(self.embeddings, self.embeddings[self.words == w1])
-            d2 = get_distances(self.embeddings, self.embeddings[self.words == w2])
+            d1 = get_distances(self.embeddings, self.embeddings[self.words == w1][0])
+            d2 = get_distances(self.embeddings, self.embeddings[self.words == w2][0])
 
             if r1 < r2:
                 self.penalties += (d1 > d2).astype(int)
