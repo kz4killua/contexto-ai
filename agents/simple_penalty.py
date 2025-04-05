@@ -10,8 +10,8 @@ class SimplePenaltyAgent:
         self.words = words
         self.embeddings = embeddings
         self.game = game
-        self.penalties = np.zeros(len(self.words), dtype=np.float64)
         self.metric = metric
+        self.penalties = np.zeros(len(self.words), dtype=np.float64)
 
     def play(self, moves: int, log: bool=False):
         """Play the game for a given number of moves."""
