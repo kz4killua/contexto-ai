@@ -6,11 +6,12 @@ from utils import get_distances
 
 class SimplePenaltyAgent:
 
-    def __init__(self, game: Game, words: np.ndarray, embeddings: np.ndarray):
+    def __init__(self, game: Game, words: np.ndarray, embeddings: np.ndarray, metric:str='cosine'):
         self.words = words
         self.embeddings = embeddings
         self.game = game
         self.penalties = np.zeros(len(self.words), dtype=np.float64)
+        self.metric = metric
 
     def play(self, moves: int, log: bool=False):
         """Play the game for a given number of moves."""
@@ -53,8 +54,8 @@ class SimplePenaltyAgent:
             w1, r1 = word, rank
             w2, r2 = self.words[last_guess], last_rank
 
-            d1 = get_distances(self.embeddings, self.embeddings[self.words == w1][0])
-            d2 = get_distances(self.embeddings, self.embeddings[self.words == w2][0])
+            d1 = get_distances(self.embeddings, self.embeddings[self.words == w1][0], self.metric)
+            d2 = get_distances(self.embeddings, self.embeddings[self.words == w2][0], self.metric)
 
             if r1 < r2:
                 self.penalties += (d1 > d2).astype(int)

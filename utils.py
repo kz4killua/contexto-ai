@@ -32,6 +32,6 @@ def get_rank(word: str, game: int) -> (int | None):
     return rank
 
 
-def get_distances(embeddings: np.ndarray, e: np.ndarray) -> np.ndarray:
-    """Returns the cosine distances between the `embeddings` and a `e`."""
-    return cdist(embeddings, e.reshape(1, -1), metric='cosine').flatten()
+def get_distances(embeddings: np.ndarray, e: np.ndarray, metric: str) -> np.ndarray:
+    """Returns the distances between the `embeddings` and a `e`."""
+    return cdist(embeddings, e.reshape(1, -1), metric=metric).flatten()
